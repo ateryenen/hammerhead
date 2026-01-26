@@ -3,75 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hammerhead | 15秒鑄造您的智慧應用</title>
+    <title>Hammerhead | 下一代智慧鑄造引擎</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;600;900&family=Noto+Sans+TC:wght@300;700&display=swap" rel="stylesheet">
     <style>
-        :root { --h-cyan: #00f2ff; --h-dark: #05070a; --h-blue: #0088ff; }
-        body { background: var(--h-dark); color: white; font-family: 'Inter', 'Noto Sans TC', sans-serif; margin: 0; overflow: hidden; }
+        :root { --h-cyan: #00f2ff; --h-blue: #0066ff; --h-dark: #020408; --h-glass: rgba(10, 15, 25, 0.7); }
+        body { background: var(--h-dark); color: #e0e6ed; font-family: 'Inter', 'Noto Sans TC', sans-serif; margin: 0; overflow: hidden; }
+
+        /* 動態背景 */
+        .bg-glow { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at 80% 20%, #0044ff22 0%, transparent 40%), radial-gradient(circle at 20% 80%, #00f2ff11 0%, transparent 40%); }
+
         .page { display: none; height: 100vh; width: 100vw; }
-        .page.active { display: flex; flex-direction: column; animation: fadeIn 0.5s ease; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .page.active { display: flex; flex-direction: column; animation: pageFade 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+        @keyframes pageFade { from { opacity: 0; transform: scale(1.02); } to { opacity: 1; transform: scale(1); } }
 
-        /* 門戶樣式 */
-        .hero-layout { align-items: center; justify-content: center; background: radial-gradient(circle at top right, #0044ff15, transparent); }
-        .glass-card { background: rgba(255,255,255,0.02); backdrop-filter: blur(12px); border: 1px solid rgba(0,242,255,0.15); border-radius: 40px; padding: 60px; text-align: center; max-width: 800px; }
-        .btn-forge { background: linear-gradient(45deg, var(--h-cyan), var(--h-blue)); color: var(--h-dark); font-weight: 800; letter-spacing: 2px; border-radius: 50px; padding: 18px 45px; border: none; transition: 0.4s; cursor: pointer; }
+        /* 門戶頁 - 奢華感提升 */
+        .hero-layout { align-items: center; justify-content: center; }
+        .glass-card { background: var(--h-glass); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 50px; padding: 80px; text-align: center; box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8); }
+        .btn-forge { background: linear-gradient(135deg, var(--h-cyan), var(--h-blue)); color: #000; font-weight: 900; letter-spacing: 4px; border-radius: 100px; padding: 20px 60px; border: none; transition: 0.5s; text-transform: uppercase; box-shadow: 0 0 30px rgba(0, 242, 255, 0.3); }
+        .btn-forge:hover { transform: translateY(-5px); box-shadow: 0 20px 50px rgba(0, 242, 255, 0.5); color: #fff; }
 
-        /* 控制台樣式 */
-        .console-header { border-bottom: 1px solid rgba(255,255,255,0.1); padding: 10px 30px; display: flex; align-items: center; height: 70px; }
-        .main-layout { display: grid; grid-template-columns: 350px 1fr; height: calc(100vh - 70px); }
-        .sidebar { background: rgba(255,255,255,0.02); border-right: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; }
-        #chat-box { flex: 1; overflow-y: auto; padding: 20px; font-size: 0.85rem; }
-        .msg { margin-bottom: 15px; padding: 12px; border-radius: 10px; background: rgba(255,255,255,0.05); border-left: 3px solid var(--h-cyan); animation: slideIn 0.3s ease; }
-        @keyframes slideIn { from { transform: translateX(-10px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        .input-area { padding: 20px; border-top: 1px solid rgba(255,255,255,0.1); }
-
-        /* 畫布區 */
-        .viz-area { padding: 40px; background: radial-gradient(circle at center, #0a1220 0%, #05070a 100%); position: relative; overflow: hidden; }
-        .node { position: absolute; border: 1px solid var(--h-cyan); padding: 8px 15px; border-radius: 5px; background: rgba(0,0,0,0.8); font-size: 0.75rem; color: var(--h-cyan); box-shadow: 0 0 15px rgba(0, 242, 255, 0.2); animation: grow 0.5s ease; }
-        @keyframes grow { from { transform: scale(0); } to { transform: scale(1); } }
+        /* 控制台 - 專業暗色調 */
+        .console-header { background: rgba(0,0,0,0.5); border-bottom: 1px solid rgba(255,255,255,0.05); padding: 0 40px; height: 80px; display: flex; align-items: center; backdrop-filter: blur(10px); }
+        .main-layout { display: grid; grid-template-columns: 400px 1fr; height: calc(100vh - 80px); }
+        .sidebar { background: rgba(5, 8, 15, 0.5); border-right: 1px solid rgba(255,255,255,0.05); padding: 30px; display: flex; flex-direction: column; }
+        #chat-box { flex: 1; overflow-y: auto; margin-bottom: 20px; }
+        .msg { background: rgba(255,255,255,0.03); border-radius: 15px; padding: 15px; margin-bottom: 15px; font-size: 0.95rem; border: 1px solid rgba(255,255,255,0.05); }
+        .msg-aria { border-left: 4px solid var(--h-cyan); background: linear-gradient(90deg, rgba(0,242,255,0.05), transparent); }
         
-        /* 預覽視窗 */
-        #app-preview { display: none; background: white; border-radius: 20px; width: 320px; height: 550px; margin: 0 auto; color: #333; overflow: hidden; box-shadow: 0 0 50px rgba(0,0,0,0.5); }
+        /* 視覺展示區 */
+        .viz-area { position: relative; overflow: hidden; background: #000; display: flex; align-items: center; justify-content: center; }
+        .grid-bg { position: absolute; width: 200%; height: 200%; background-image: linear-gradient(rgba(0,242,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0,242,255,0.05) 1px, transparent 1px); background-size: 50px 50px; transform: rotateX(60deg) translateY(-20%); z-index: 0; animation: gridMove 20s linear infinite; }
+        @keyframes gridMove { from { background-position: 0 0; } to { background-position: 0 1000px; } }
+
+        /* 浮動節點 */
+        .node-chip { position: absolute; background: rgba(0, 242, 255, 0.1); border: 1px solid var(--h-cyan); padding: 10px 20px; border-radius: 100px; color: var(--h-cyan); font-size: 0.8rem; font-weight: bold; backdrop-filter: blur(5px); z-index: 2; box-shadow: 0 0 20px rgba(0, 242, 255, 0.2); transition: 0.5s; }
+
+        /* 模擬 App 預覽 */
+        #app-preview-frame { display: none; width: 340px; height: 650px; background: #fff; border-radius: 45px; border: 8px solid #1a1a1a; position: relative; z-index: 10; overflow: hidden; box-shadow: 0 50px 100px rgba(0,0,0,0.8); animation: phoneUp 0.8s cubic-bezier(0.17, 0.67, 0.83, 0.67); }
+        @keyframes phoneUp { from { transform: translateY(100vh); } to { transform: translateY(0); } }
+        .app-header { background: #f8f9fa; height: 80px; padding: 30px 20px 10px; font-weight: 900; font-size: 1.2rem; color: #000; border-bottom: 1px solid #eee; }
     </style>
 </head>
 <body>
 
+<div class="bg-glow"></div>
+
 <div id="page-landing" class="page active hero-layout">
     <div class="glass-card">
-        <svg width="80" height="80" viewBox="0 0 100 100" class="mb-4">
-            <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#00f2ff;"/><stop offset="100%" style="stop-color:#0088ff;"/></linearGradient>
+        <svg width="120" height="120" viewBox="0 0 100 100" class="mb-5">
+            <defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#00f2ff;"/><stop offset="100%" style="stop-color:#0066ff;"/></linearGradient></defs>
             <path d="M 82 38 C 82 28, 18 28, 18 38 C 18 48, 32 48, 38 52 C 42 65, 38 82, 50 88 C 62 82, 58 65, 62 52 C 68 48, 82 48, 82 38 Z" fill="url(#g)" />
             <circle cx="30" cy="38" r="3" fill="#fff" />
         </svg>
-        <h1 class="display-5 fw-bold mb-3" style="letter-spacing: 5px;">HAMMERHEAD</h1>
-        <button class="btn btn-forge" onclick="nav('page-console')">啟動鑄造爐</button>
+        <h1 class="display-3 fw-900 mb-2" style="letter-spacing: 12px; color: #fff;">HAMMERHEAD</h1>
+        <p class="lead mb-5" style="color: #8892b0; letter-spacing: 2px;">Conversational Software Forging Engine</p>
+        <button class="btn btn-forge" onclick="nav('page-console')">進入控制台</button>
     </div>
 </div>
 
 <div id="page-console" class="page">
     <div class="console-header">
-        <svg width="30" height="30" viewBox="0 0 100 100"><path d="M 82 38 C 82 28, 18 28, 18 38 C 18 48, 32 48, 38 52 C 42 65, 38 82, 50 88 C 62 82, 58 65, 62 52 C 68 48, 82 48, 82 38 Z" fill="#00f2ff"/></svg>
-        <span class="ms-3 fw-bold text-info">FORGE ALPHA</span>
+        <svg width="40" height="40" viewBox="0 0 100 100"><path d="M 82 38 C 82 28, 18 28, 18 38 C 18 48, 32 48, 38 52 C 42 65, 38 82, 50 88 C 62 82, 58 65, 62 52 C 68 48, 82 48, 82 38 Z" fill="#00f2ff"/></svg>
+        <h5 class="ms-3 mb-0 fw-bold" style="letter-spacing: 4px; color: var(--h-cyan)">FORGE CENTER v6.0</h5>
     </div>
+    
     <div class="main-layout">
         <div class="sidebar">
             <div id="chat-box">
-                <div class="msg"><strong>Aria:</strong> 負責人，鑄造爐已就緒。請輸入您的應用程式願景。</div>
+                <div class="msg msg-aria"><strong>Aria:</strong> 負責人，系統已切換至「極光介面」。您的願景將以最高規格呈現。</div>
             </div>
-            <div class="input-area">
-                <input type="text" id="user-in" class="form-control bg-dark text-white border-secondary mb-2" placeholder="例如：多 AI Agent 分析工具">
-                <button class="btn btn-info w-100" onclick="forge()">鑄造</button>
+            <div class="input-area mt-auto">
+                <input type="text" id="user-in" class="form-control bg-dark text-white border-0 p-3 mb-2" style="border-radius:15px;" placeholder="描述您的應用...">
+                <button class="btn btn-info w-100 fw-bold" style="border-radius:15px;" onclick="forge()">開始高階鑄造</button>
             </div>
         </div>
+        
         <div class="viz-area" id="canvas">
-            <div id="loading-status" style="display: none;" class="text-center mt-5">
-                <h4 class="text-info">系統正在編織代碼...</h4>
-                <div class="spinner-border text-info mt-2"></div>
-            </div>
-            <div id="app-preview">
-                <div style="background:#00f2ff; height:60px; padding:15px; font-weight:bold;">Hammerhead App Preview</div>
-                <div class="p-4"><p>您的應用程式已生成！</p><div class="list-group"><div class="list-group-item">AI Agent A 狀態：正常</div><div class="list-group-item">AI Agent B 狀態：待命</div></div></div>
+            <div class="grid-bg"></div>
+            <div id="app-preview-frame">
+                <div class="app-header">My AI Agent App</div>
+                <div class="p-4" style="color:#666">
+                    <div class="mb-4" style="height:150px; background:#f0f2f5; border-radius:20px; display:flex; align-items:center; justify-content:center;">可視化圖表區域</div>
+                    <h6>核心模組：</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2 p-2" style="background:#f8f9fa; border-radius:10px;">✅ 語意分析引擎已就緒</li>
+                        <li class="mb-2 p-2" style="background:#f8f9fa; border-radius:10px;">✅ 多代理人協作協議</li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
@@ -87,30 +106,29 @@
         const val = document.getElementById('user-in').value;
         const chat = document.getElementById('chat-box');
         const canvas = document.getElementById('canvas');
-        const loader = document.getElementById('loading-status');
         if(!val) return;
 
-        chat.innerHTML += `<div class="msg" style="border-left-color:#fff"><strong>您:</strong> ${val}</div>`;
-        loader.style.display = 'block';
+        chat.innerHTML += `<div class="msg"><strong>您:</strong> ${val}</div>`;
+        chat.scrollTop = chat.scrollHeight;
 
-        // 模擬動態生成節點
-        for(let i=0; i<5; i++) {
+        // 生成高科技節點
+        const nodes = ['CORE ENGINE', 'LLM ADAPTER', 'AUTH FLOW', 'VECTOR DB', 'UX LAYER'];
+        nodes.forEach((n, i) => {
             setTimeout(() => {
-                const node = document.createElement('div');
-                node.className = 'node';
-                node.innerText = ['Schema', 'API Flow', 'UI Component', 'Auth', 'Database'][i];
-                node.style.left = Math.random()*70 + 10 + '%';
-                node.style.top = Math.random()*70 + 10 + '%';
-                canvas.appendChild(node);
-            }, i * 500);
-        }
+                const div = document.createElement('div');
+                div.className = 'node-chip';
+                div.innerText = n;
+                div.style.left = Math.random()*60 + 20 + '%';
+                div.style.top = Math.random()*60 + 20 + '%';
+                canvas.appendChild(div);
+            }, i * 300);
+        });
 
         setTimeout(() => {
-            chat.innerHTML += `<div class="msg"><strong>Aria:</strong> 鑄造完成！您的願景已轉化為實體。</div>`;
-            loader.style.display = 'none';
-            document.getElementById('app-preview').style.display = 'block';
+            document.getElementById('app-preview-frame').style.display = 'block';
+            chat.innerHTML += `<div class="msg msg-aria"><strong>Aria:</strong> 鑄造成功。成品已輸出至中央預覽區。</div>`;
             chat.scrollTop = chat.scrollHeight;
-        }, 3000);
+        }, 2000);
         document.getElementById('user-in').value = '';
     }
 </script>
