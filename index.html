@@ -8,106 +8,110 @@
     <style>
         :root { --h-cyan: #00f2ff; --h-dark: #05070a; --h-blue: #0088ff; }
         body { background: var(--h-dark); color: white; font-family: 'Inter', 'Noto Sans TC', sans-serif; margin: 0; overflow: hidden; }
-        
-        /* 頁面切換系統 */
         .page { display: none; height: 100vh; width: 100vw; }
-        .page.active { display: flex; flex-direction: column; animation: fadeIn 0.8s ease; }
+        .page.active { display: flex; flex-direction: column; animation: fadeIn 0.5s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* 頁面 A: 門戶樣式 */
+        /* 門戶樣式 */
         .hero-layout { align-items: center; justify-content: center; background: radial-gradient(circle at top right, #0044ff15, transparent); }
         .glass-card { background: rgba(255,255,255,0.02); backdrop-filter: blur(12px); border: 1px solid rgba(0,242,255,0.15); border-radius: 40px; padding: 60px; text-align: center; max-width: 800px; }
         .btn-forge { background: linear-gradient(45deg, var(--h-cyan), var(--h-blue)); color: var(--h-dark); font-weight: 800; letter-spacing: 2px; border-radius: 50px; padding: 18px 45px; border: none; transition: 0.4s; cursor: pointer; }
-        .btn-forge:hover { transform: scale(1.05); box-shadow: 0 0 40px rgba(0, 242, 255, 0.4); color: white; }
 
-        /* 頁面 B: 控制台樣式 */
+        /* 控制台樣式 */
         .console-header { border-bottom: 1px solid rgba(255,255,255,0.1); padding: 10px 30px; display: flex; align-items: center; height: 70px; }
-        .main-layout { display: grid; grid-template-columns: 380px 1fr; height: calc(100vh - 70px); }
+        .main-layout { display: grid; grid-template-columns: 350px 1fr; height: calc(100vh - 70px); }
         .sidebar { background: rgba(255,255,255,0.02); border-right: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; }
-        #chat-box { flex: 1; overflow-y: auto; padding: 20px; font-size: 0.9rem; }
-        .msg { margin-bottom: 15px; padding: 12px; border-radius: 10px; background: rgba(255,255,255,0.05); border-left: 3px solid var(--h-cyan); }
+        #chat-box { flex: 1; overflow-y: auto; padding: 20px; font-size: 0.85rem; }
+        .msg { margin-bottom: 15px; padding: 12px; border-radius: 10px; background: rgba(255,255,255,0.05); border-left: 3px solid var(--h-cyan); animation: slideIn 0.3s ease; }
+        @keyframes slideIn { from { transform: translateX(-10px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         .input-area { padding: 20px; border-top: 1px solid rgba(255,255,255,0.1); }
-        .viz-area { padding: 40px; background: radial-gradient(circle at center, #0a1220 0%, #05070a 100%); position: relative; }
+
+        /* 畫布區 */
+        .viz-area { padding: 40px; background: radial-gradient(circle at center, #0a1220 0%, #05070a 100%); position: relative; overflow: hidden; }
+        .node { position: absolute; border: 1px solid var(--h-cyan); padding: 8px 15px; border-radius: 5px; background: rgba(0,0,0,0.8); font-size: 0.75rem; color: var(--h-cyan); box-shadow: 0 0 15px rgba(0, 242, 255, 0.2); animation: grow 0.5s ease; }
+        @keyframes grow { from { transform: scale(0); } to { transform: scale(1); } }
+        
+        /* 預覽視窗 */
+        #app-preview { display: none; background: white; border-radius: 20px; width: 320px; height: 550px; margin: 0 auto; color: #333; overflow: hidden; box-shadow: 0 0 50px rgba(0,0,0,0.5); }
     </style>
 </head>
 <body>
 
 <div id="page-landing" class="page active hero-layout">
     <div class="glass-card">
-        <div class="mb-4">
-            <svg width="100" height="100" viewBox="0 0 100 100">
-                <defs>
-                    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" style="stop-color:#00f2ff;" />
-                        <stop offset="100%" style="stop-color:#0088ff;" />
-                    </linearGradient>
-                </defs>
-                <path d="M 82 38 C 82 28, 18 28, 18 38 C 18 48, 32 48, 38 52 C 42 65, 38 82, 50 88 C 62 82, 58 65, 62 52 C 68 48, 82 48, 82 38 Z" fill="url(#g)" />
-                <circle cx="30" cy="38" r="3" fill="#fff" />
-            </svg>
-        </div>
-        <h1 class="display-4 fw-bold mb-3" style="letter-spacing: 8px;">HAMMERHEAD</h1>
-        <p class="lead text-muted mb-5">Conversational Software Forging Engine<br><span class="text-info">15 秒內，將您的語意轉化為現實</span></p>
-        <button class="btn btn-forge" onclick="goToConsole()">進入鑄造控制台</button>
+        <svg width="80" height="80" viewBox="0 0 100 100" class="mb-4">
+            <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#00f2ff;"/><stop offset="100%" style="stop-color:#0088ff;"/></linearGradient>
+            <path d="M 82 38 C 82 28, 18 28, 18 38 C 18 48, 32 48, 38 52 C 42 65, 38 82, 50 88 C 62 82, 58 65, 62 52 C 68 48, 82 48, 82 38 Z" fill="url(#g)" />
+            <circle cx="30" cy="38" r="3" fill="#fff" />
+        </svg>
+        <h1 class="display-5 fw-bold mb-3" style="letter-spacing: 5px;">HAMMERHEAD</h1>
+        <button class="btn btn-forge" onclick="nav('page-console')">啟動鑄造爐</button>
     </div>
 </div>
 
 <div id="page-console" class="page">
     <div class="console-header">
-        <svg width="40" height="40" viewBox="0 0 100 100">
-            <path d="M 82 38 C 82 28, 18 28, 18 38 C 18 48, 32 48, 38 52 C 42 65, 38 82, 50 88 C 62 82, 58 65, 62 52 C 68 48, 82 48, 82 38 Z" fill="#00f2ff"/>
-        </svg>
-        <h4 class="ms-3 mb-0 fw-bold tracking-widest" style="color:var(--h-cyan)">HAMMERHEAD FORGE</h4>
+        <svg width="30" height="30" viewBox="0 0 100 100"><path d="M 82 38 C 82 28, 18 28, 18 38 C 18 48, 32 48, 38 52 C 42 65, 38 82, 50 88 C 62 82, 58 65, 62 52 C 68 48, 82 48, 82 38 Z" fill="#00f2ff"/></svg>
+        <span class="ms-3 fw-bold text-info">FORGE ALPHA</span>
     </div>
-    
     <div class="main-layout">
         <div class="sidebar">
             <div id="chat-box">
-                <div class="msg"><strong>Aria:</strong> 負責人，鑄造爐已準備就緒。目前正以「Alpha 測試模式」運行。請告訴我您想建立什麼樣的應用程式？</div>
+                <div class="msg"><strong>Aria:</strong> 負責人，鑄造爐已就緒。請輸入您的應用程式願景。</div>
             </div>
             <div class="input-area">
-                <input type="text" id="user-input" class="form-control bg-dark text-white border-secondary mb-2" placeholder="輸入需求 (例如: 育兒導航 App)">
-                <button class="btn btn-info w-100 btn-sm" onclick="sendMsg()">傳送指令</button>
+                <input type="text" id="user-in" class="form-control bg-dark text-white border-secondary mb-2" placeholder="例如：多 AI Agent 分析工具">
+                <button class="btn btn-info w-100" onclick="forge()">鑄造</button>
             </div>
         </div>
-        
-        <div class="viz-area">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <span class="badge border border-info text-info">狀態: 伺服器已連線</span>
-                <span class="small text-muted">地區: 三重指揮中心</span>
+        <div class="viz-area" id="canvas">
+            <div id="loading-status" style="display: none;" class="text-center mt-5">
+                <h4 class="text-info">系統正在編織代碼...</h4>
+                <div class="spinner-border text-info mt-2"></div>
             </div>
-            <div id="viz-content" class="text-center mt-5 pt-5">
-                <h2 class="text-muted opacity-25">等待語意解析...</h2>
-                <div class="spinner-border text-info mt-3" role="status"></div>
+            <div id="app-preview">
+                <div style="background:#00f2ff; height:60px; padding:15px; font-weight:bold;">Hammerhead App Preview</div>
+                <div class="p-4"><p>您的應用程式已生成！</p><div class="list-group"><div class="list-group-item">AI Agent A 狀態：正常</div><div class="list-group-item">AI Agent B 狀態：待命</div></div></div>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    function goToConsole() {
-        document.getElementById('page-landing').classList.remove('active');
-        document.getElementById('page-console').classList.add('active');
+    function nav(id) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
     }
 
-    function sendMsg() {
-        const input = document.getElementById('user-input');
+    function forge() {
+        const val = document.getElementById('user-in').value;
         const chat = document.getElementById('chat-box');
-        const viz = document.getElementById('viz-content');
-        
-        if (!input.value) return;
+        const canvas = document.getElementById('canvas');
+        const loader = document.getElementById('loading-status');
+        if(!val) return;
 
-        // 用戶訊息
-        chat.innerHTML += `<div class="msg" style="border-left-color: #fff"><strong>您:</strong> ${input.value}</div>`;
-        
-        // Aria 回應模擬
+        chat.innerHTML += `<div class="msg" style="border-left-color:#fff"><strong>您:</strong> ${val}</div>`;
+        loader.style.display = 'block';
+
+        // 模擬動態生成節點
+        for(let i=0; i<5; i++) {
+            setTimeout(() => {
+                const node = document.createElement('div');
+                node.className = 'node';
+                node.innerText = ['Schema', 'API Flow', 'UI Component', 'Auth', 'Database'][i];
+                node.style.left = Math.random()*70 + 10 + '%';
+                node.style.top = Math.random()*70 + 10 + '%';
+                canvas.appendChild(node);
+            }, i * 500);
+        }
+
         setTimeout(() => {
-            chat.innerHTML += `<div class="msg"><strong>Aria:</strong> 收到。正在將「${input.value}」映射至工業組件庫...</div>`;
-            viz.innerHTML = `<h3 class="text-info">鑄造中: ${input.value}</h3><p class="small">正在動態生成心智圖節點</p>`;
+            chat.innerHTML += `<div class="msg"><strong>Aria:</strong> 鑄造完成！您的願景已轉化為實體。</div>`;
+            loader.style.display = 'none';
+            document.getElementById('app-preview').style.display = 'block';
             chat.scrollTop = chat.scrollHeight;
-        }, 800);
-
-        input.value = '';
+        }, 3000);
+        document.getElementById('user-in').value = '';
     }
 </script>
 </body>
